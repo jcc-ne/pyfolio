@@ -660,6 +660,7 @@ def show_perf_stats(returns, factor_returns=None, positions=None,
         float_format='{0:.2f}'.format,
         header_rows=header_rows,
     )
+    return perf_stats
 
 
 def plot_returns(returns,
@@ -1674,6 +1675,7 @@ def show_worst_drawdown_periods(returns, top=5):
         name='Worst drawdown periods',
         float_format='{0:.2f}'.format,
     )
+    return drawdown_df
 
 
 def plot_monthly_returns_timeseries(returns, ax=None, **kwargs):

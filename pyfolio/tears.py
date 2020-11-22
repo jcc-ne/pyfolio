@@ -177,7 +177,8 @@ def create_full_tear_sheet(returns,
     positions = utils.check_intraday(estimate_intraday, returns,
                                      positions, transactions)
 
-    create_returns_tear_sheet(
+    charts = []
+    chart, df1, df2 = create_returns_tear_sheet(
         returns,
         positions=positions,
         transactions=transactions,
@@ -187,11 +188,17 @@ def create_full_tear_sheet(returns,
         bootstrap=bootstrap,
         turnover_denom=turnover_denom,
         header_rows=header_rows,
-        set_context=set_context)
+        set_context=set_context,
+        return_fig=True)
 
-    create_interesting_times_tear_sheet(returns,
+    charts.append(chart)
+    charts.append(df1)
+    charts.append(df2)
+    charts.append(create_interesting_times_tear_sheet(returns,
                                         benchmark_rets=benchmark_rets,
-                                        set_context=set_context)
+                                        set_context=set_context,
+                                        return_fig=True
+                                        ))
 
     if positions is not None:
         create_position_tear_sheet(returns, positions,
@@ -225,6 +232,7 @@ def create_full_tear_sheet(returns,
                                           factor_loadings, transactions,
                                           pos_in_dollars=pos_in_dollars,
                                           factor_partitions=factor_partitions)
+    return charts
 
 
 @plotting.customize
@@ -403,6 +411,7 @@ def create_simple_tear_sheet(returns,
 
     for ax in fig.axes:
         plt.setp(ax.get_xticklabels(), visible=True)
+    return fig
 
 
 @plotting.customize
@@ -463,7 +472,7 @@ def create_returns_tear_sheet(returns, positions=None,
     if benchmark_rets is not None:
         returns = utils.clip_returns_to_benchmark(returns, benchmark_rets)
 
-    plotting.show_perf_stats(returns, benchmark_rets,
+    df_perf = plotting.show_perf_stats(returns, benchmark_rets,
                              positions=positions,
                              transactions=transactions,
                              turnover_denom=turnover_denom,
@@ -471,7 +480,7 @@ def create_returns_tear_sheet(returns, positions=None,
                              live_start_date=live_start_date,
                              header_rows=header_rows)
 
-    plotting.show_worst_drawdown_periods(returns)
+    df_worst = plotting.show_worst_drawdown_periods(returns)
 
     vertical_sections = 11
 
@@ -592,7 +601,7 @@ def create_returns_tear_sheet(returns, positions=None,
         plt.setp(ax.get_xticklabels(), visible=True)
 
     if return_fig:
-        return fig
+        return fig, df_perf, df_worst
 
 
 @plotting.customize
